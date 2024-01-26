@@ -14,12 +14,16 @@ public class GhostMovement : MonoBehaviour
     public float speed = 0.3f;
     //Referencia al Rigidbody del fantasma
     public Rigidbody2D ghostRB;
+    //Referencia al Animator del fantasma
+    public Animator anim;
 
     // Start is called before the first frame update
     void Start()
     {
         //Inicializamos el Rigidbody
         ghostRB = GetComponent<Rigidbody2D>();
+        //Inicializamos el Animator
+        anim = GetComponent<Animator>();
     }
 
     // Usamos Fixed porque es un movimiento físico y continuo y automático
@@ -47,6 +51,13 @@ public class GhostMovement : MonoBehaviour
                 //Reseteamos al primer punto de los guardados
                 currentWaypoint = 0;
 
+            //Nueva dirección para calcular la animación si cambiamos de dirección:
+            //donde va - donde está ahora
+            Vector2 newDirection = waypoints[currentWaypoint].position - transform.position;
+            //Cambiamos las animaciones
+            anim.SetFloat("DirX", newDirection.x);
+            anim.SetFloat("DirY", newDirection.y);
+
         }
         //Si el fantasma aún no ha llegado a su destino
         else
@@ -67,6 +78,8 @@ public class GhostMovement : MonoBehaviour
         {
             //Destruye a PacMan
             Debug.Log("Jugador muerto");
+            //Destruye a PacMan(obteniendo de este GameObject, su código para poder coger de él el método de PacManDead())
+            collision.gameObject.GetComponent<PacManMovement>().PacManDead();
         }
     }
 }
