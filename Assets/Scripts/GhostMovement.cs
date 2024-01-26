@@ -12,6 +12,8 @@ public class GhostMovement : MonoBehaviour
     int currentWaypoint = 0;
     //Velocidad del fantasma
     public float speed = 0.3f;
+    //Variable para saber si el fantasma es vulnerable
+    public bool canDie;
     //Referencia al Rigidbody del fantasma
     public Rigidbody2D ghostRB;
     //Referencia al Animator del fantasma
@@ -24,6 +26,26 @@ public class GhostMovement : MonoBehaviour
         ghostRB = GetComponent<Rigidbody2D>();
         //Inicializamos el Animator
         anim = GetComponent<Animator>();
+    }
+
+    private void Update()
+    {
+        //Si PacMan sigue siendo invencible
+        if (GameManager.gmSharedInstance.invincibleTime > 0)
+        {
+            //El fantasma cambia a azul
+            anim.SetBool("PacManInvencible", true);
+            //El fantasma puede morir
+            canDie = true;
+        }
+        else
+        {
+            //El fantasma queda como al principio
+            anim.SetBool("PacManInvencible", false);
+            //El fantasma no puede morir
+            canDie = false;
+        }
+            
     }
 
     // Usamos Fixed porque es un movimiento físico y continuo y automático
@@ -73,8 +95,8 @@ public class GhostMovement : MonoBehaviour
     //Método para conocer la reacción de un fantasma al impactar contra PacMan
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Si el objeto que se ha metido en el trigger del fantasma es el jugador
-        if (collision.CompareTag("Player"))
+        //Si el objeto que se ha metido en el trigger del fantasma es el jugador y el enemigo no puede morir
+        if (collision.CompareTag("Player") && !canDie)
         {
             //Destruye a PacMan
             Debug.Log("Jugador muerto");

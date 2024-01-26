@@ -61,4 +61,16 @@ public class PacManMovement : MonoBehaviour
         Destroy(gameObject);
     }
 
+
+    //Método para conocer la reacción de PacMan al impactar contra un fantasma
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Si el objeto que se ha metido en el trigger de PacMan es un enemigo y puede morir
+        if (collision.CompareTag("Enemy") && collision.GetComponent<GhostMovement>().canDie)
+        {
+            //Destruye al fantasma
+            Destroy(collision.gameObject);
+        }
+    }
+
 }
